@@ -22,6 +22,10 @@ public class PlayerGroundedState : PlayerState
     public override void Update()
     {
         base.Update();
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+            stateMachine.ChangeState(player.primaryAttack);
+
         if (!player.IsGroundDetected())
             stateMachine.ChangeState(player.airState);
         // 만약 스페이스바 키가 눌렸을 때(Player가 땅에 있을 때)

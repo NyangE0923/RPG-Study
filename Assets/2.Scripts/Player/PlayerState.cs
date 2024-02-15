@@ -15,6 +15,7 @@ public class PlayerState
     [Header("Input")]
     protected float xInput;
     protected float yInput;
+    protected bool triggerCalled;
 
     //현재 상태에서 사용될 애니메이션 bool 변수의 이름
     private string animBoolName;
@@ -38,6 +39,9 @@ public class PlayerState
         //PlayerState의 rigidbody2D의 값에 player클래스의 rigidbody2D의 값을 상속한다.(원래라면 getcomponent 알지?
         player.anim.SetBool(animBoolName, true);
         rb = player.rb;
+
+        //연속 공격 기본값
+        triggerCalled = false;
     }
 
     //매 프레임마다 호출되는 가상 메서드
@@ -64,5 +68,10 @@ public class PlayerState
     {
         //상태를 빠져나갈 때 실행될 코드 작성 가능
         player.anim.SetBool(animBoolName, false);
+    }
+
+    public virtual void AnimationFinishTrigger()
+    {
+        triggerCalled = true;
     }
 }

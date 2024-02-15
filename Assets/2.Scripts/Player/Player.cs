@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [Header("Attack details")]
+    public Vector2[] attackMovement;
+
+    public bool isBusy {  get; private set; }
+
     [Header("Move info")]
     public float moveSpeed = 12f;
     public float jumpForce = 12f;
@@ -78,6 +83,22 @@ public class Player : MonoBehaviour
         CheckForDashInput();
     }
 
+    //주어진 시간 동안 isBusy를 true로 설정한 후, 해당 시간이 경과하면 다시 false로 설정한다.
+    public IEnumerator BusyFor(float _seconds)
+    {
+        //isBusy 변수를 true로 설정하여 현재 작업 중임을 나타냅니다.
+        isBusy = true;
+
+        //waitForSecounds(_seconds)를 사용하여 주어진 시간(_seconds)만큼 대기한다.
+        //이를 통해 지정된 시간만큼 코루틴이 대기하고, 대기가 완료되면 다음 코드인 isBusy = false;를 진행함
+        yield return new WaitForSeconds(_seconds);
+
+        isBusy = false;
+    }
+
+    //람다 표현식의 화살표 연산자를 사용해 PlayerStateMachine클래스의 CurrentStage에 접근하고 AnimationFinishTrigger메서드를 호출한다.
+    public void AnimationTrigger() => StateMachine.currentState.AnimationFinishTrigger();
+
     private void CheckForDashInput()
     {
         if (IsWallDetected())
@@ -97,6 +118,9 @@ public class Player : MonoBehaviour
         }
 
     }
+    #region Velocity
+    //이동속도를 0으로 만드는 함수
+    public void ZeroVelocity() => rb.velocity = new Vector2(0, 0);
 
     //SetVelocity 라는 메서드(float x, y를 가진)를 생성한다.
     //이때 rigidbody2D의 velocity는 새로운 velocity _xVelocity, _yVelocity로 선언한다.
@@ -105,7 +129,8 @@ public class Player : MonoBehaviour
         rb.velocity = new Vector2(_xVelocity, _yVelocity);
         FlipController(_xVelocity);
     }
-
+    #endregion
+    #region Collision
     //땅 탐지
     public bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
     //벽 탐지 right라고 썼지만 facingDir을 통해 양쪽 방향 모두 탐지 가능
@@ -124,7 +149,8 @@ public class Player : MonoBehaviour
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y));
 
     }
-
+    #endregion
+    #region Flip
     public void Flip()
     {
         facingDir = facingDir * -1;
@@ -145,4 +171,5 @@ public class Player : MonoBehaviour
             Flip();
         }
     }
+    #endregion
 }

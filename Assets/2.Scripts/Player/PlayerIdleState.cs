@@ -13,7 +13,8 @@ public class PlayerIdleState : PlayerGroundedState
     {
         base.Enter();
         //Idle상태로 진입했을때 모든 속도를 0으로 변경한다.
-        rb.velocity = new Vector2(0, 0);
+        //rb.velocity = new Vector2(0, 0);
+        player.ZeroVelocity();
     }
 
     public override void Exit()
@@ -28,8 +29,8 @@ public class PlayerIdleState : PlayerGroundedState
         if (xInput == player.facingDir && player.IsWallDetected())
             return;
 
-        //xInput의 값이 0이 아닐때 moveState로 상태를 변환한다.
-        if(xInput != 0)
+        //xInput의 값이 0이 아니거나 isBusy가 false일때 moveState로 상태를 변환한다.
+        if(xInput != 0 && !player.isBusy)
             stateMachine.ChangeState(player.moveState);
     }
 }
