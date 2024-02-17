@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerPrimaryAttackState : PlayerState
 {
-    private int comboCounter;
 
+    private int comboCounter;
     private float lastTimeAttacked;
     //공격 유지시간
     private float comboWindow = 2f;
