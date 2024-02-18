@@ -6,6 +6,7 @@ public class EnemyState
 {
     protected EnemyStateMachine stateMachine;
     protected Enemy enemyBase;
+    protected Rigidbody2D rb;
     protected string animBoolName;
     protected float stateTimer;
     protected bool triggerCalled;
@@ -27,6 +28,7 @@ public class EnemyState
     //가상 메서드 들어가기
     public virtual void Enter()
     {
+        rb = enemyBase.rb;
         triggerCalled = false;
         //enemy클래스의 애니메이션(이름, 활성화)
         enemyBase.anim.SetBool(animBoolName, true);
@@ -36,5 +38,10 @@ public class EnemyState
     {
         //enemy클래스의 애니메이션(이름, 비활성화)
         enemyBase.anim.SetBool(animBoolName, false);
+    }
+
+    public virtual void AnimationFinishTrigger()
+    {
+        triggerCalled = true;
     }
 }

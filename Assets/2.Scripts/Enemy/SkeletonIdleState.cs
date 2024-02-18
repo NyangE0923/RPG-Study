@@ -2,15 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkeletonIdleState : EnemyState
+public class SkeletonIdleState : SkeletonGroundedState
 {
-    //생성자에 Enemy_Skeleton을 enemy로 추가
-    private Enemy_Skeleton enemy;
-    public SkeletonIdleState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName, Enemy_Skeleton _enemy) : base(_enemy, _stateMachine, _animBoolName)
+    public SkeletonIdleState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName, Enemy_Skeleton enemy) : base(_enemyBase, _stateMachine, _animBoolName, enemy)
     {
-        //enemy가 헷갈릴수 있으므로 _(언더스코어)를 사용하여 알아보기 쉽게 만들고
-        //this를 사용해 이 클래스 내에서의 enemy는 Enemy_Skeleton을 상속받는 enemy만 사용함.
-        this.enemy = _enemy;
     }
 
     public override void Enter()

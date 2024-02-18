@@ -50,7 +50,6 @@ public class PlayerState
         stateTimer -= Time.deltaTime;
 
         //매 프레임마다 실행될 코드 작성 가능
-        Debug.Log("I'm in " + animBoolName);
         xInput = Input.GetAxisRaw("Horizontal");
         yInput = Input.GetAxisRaw("Vertical");
 

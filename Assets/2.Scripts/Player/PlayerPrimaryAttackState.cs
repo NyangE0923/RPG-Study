@@ -62,7 +62,7 @@ public class PlayerPrimaryAttackState : PlayerState
         base.Update();
 
         if (stateTimer < 0)
-            player.ZeroVelocity();
+            player.SetZeroVelocity();
 
         //공격이 끝났다면 PlayerIdleState로 이동
         if (triggerCalled)

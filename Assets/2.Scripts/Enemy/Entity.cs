@@ -14,6 +14,8 @@ public class Entity : MonoBehaviour
 
 
     [Header("Collision info")]
+    public Transform attackCheck;
+    public float attackCheckRadius;
     [SerializeField] protected Transform groundCheck;
     [SerializeField] protected float groundCheckDistance;
     [SerializeField] protected Transform wallCheck;
@@ -39,6 +41,12 @@ public class Entity : MonoBehaviour
     {
 
     }
+
+    public virtual void Damage()
+    {
+        Debug.Log(gameObject.name + " was damaged!");
+    }
+
     #region Collision
     //땅 탐지
     public virtual bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
@@ -47,20 +55,25 @@ public class Entity : MonoBehaviour
 
     protected virtual void OnDrawGizmos()
     {
-        // 지면 체크용 선을 그립니다. groundCheck.position은 현재 groundCheck의 위치입니다.
+        // 지면 체크용 선을 그린다. groundCheck.position은 현재 groundCheck의 위치
         // 그리고 새로운 Vector3을 만들어 groundCheck 위치에서 (x 좌표는 groundCheck의 x 좌표와 같으며,
-        // y 좌표는 groundCheck의 y 좌표에서 groundCheckDistance 만큼 아래에 있는 지점으로 생성합니다).
+        // y 좌표는 groundCheck의 y 좌표에서 groundCheckDistance 만큼 아래에 있는 지점으로 생성한다).
         Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
 
-        // 벽 체크용 선을 그립니다. wallCheck.position은 현재 wallCheck의 위치입니다.
+        // 벽 체크용 선을 그린다. wallCheck.position은 현재 wallCheck의 위치
         // 그리고 새로운 Vector3을 만들어 wallCheck 위치에서 (x 좌표는 wallCheck의 x 좌표에서
-        // wallCheckDistance 만큼 오른쪽에 있는 지점으로, y 좌표는 wallCheck의 y 좌표와 같은 곳으로 생성합니다).
+        // wallCheckDistance 만큼 오른쪽에 있는 지점으로, y 좌표는 wallCheck의 y 좌표와 같은 곳으로 생성한다).
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y));
+
+        //공격 체크용 선을 그린다. attackCheck.position은 현재 attackCheck의 위치
+        //그리고 원의 반지름은 attackCheckRadius 변수의 값에 따라 결정된다.
+        //이 원은 공격 범위를 시각적으로 표현하기 위해 사용됨
+        Gizmos.DrawWireSphere(attackCheck.position, attackCheckRadius);
 
     }
     #region Velocity
     //이동속도를 0으로 만드는 함수
-    public void ZeroVelocity() => rb.velocity = new Vector2(0, 0);
+    public void SetZeroVelocity() => rb.velocity = new Vector2(0, 0);
 
     //SetVelocity 라는 메서드(float x, y를 가진)를 생성한다.
     //이때 rigidbody2D의 velocity는 새로운 velocity _xVelocity, _yVelocity로 선언한다.

@@ -14,7 +14,7 @@ public class PlayerIdleState : PlayerGroundedState
         base.Enter();
         //Idle상태로 진입했을때 모든 속도를 0으로 변경한다.
         //rb.velocity = new Vector2(0, 0);
-        player.ZeroVelocity();
+        player.SetZeroVelocity();
     }
 
     public override void Exit()
