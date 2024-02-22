@@ -32,5 +32,11 @@ public class PlayerGroundedState : PlayerState
         // PlayerJumpState로 상태를 변경합니다.
         if (Input.GetKeyDown(KeyCode.Space) && player.IsGroundDetected())
             stateMachine.ChangeState(player.jumpState);
+
+
+        if (Input.GetKeyDown(KeyCode.F) && SkillManager.instance.counter.CanUseSkill())
+        {
+            stateMachine.ChangeState(player.counterAttack);
+        }
     }
 }

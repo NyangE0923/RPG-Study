@@ -17,6 +17,9 @@ public class PlayerPrimaryAttackState : PlayerState
     public override void Enter()
     {
         base.Enter();
+
+        xInput = 0;
+
         //콤보 카운터가 2 이상이거나 마지막 공격으로부터 comboWindow 만큼 지났다면 콤보 카운터를 0으로 초기화한다.
         if (comboCounter > 2 || Time.time >= lastTimeAttacked + comboWindow)
             comboCounter = 0;

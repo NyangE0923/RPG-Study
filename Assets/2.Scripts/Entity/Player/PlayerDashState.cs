@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerDashState : PlayerState
 {
@@ -11,6 +12,10 @@ public class PlayerDashState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        //player class의 SkillManager에서 Clone_Skill 클래스를 상속받고
+        //CreateClone메서드 함수를 불러온다.
+        //이때 필요한 Transform은 player의 transform(위치)로 한다.
+        player.skill.clone.CreateClone(player.transform);
 
         stateTimer = player.dashDuration;
     }

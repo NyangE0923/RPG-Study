@@ -6,7 +6,7 @@ public class Player : Entity
 {
     [Header("Attack details")]
     public Vector2[] attackMovement;
-
+    public float counterAttackDuration = 0.2f;
     public bool isBusy {  get; private set; }
 
     [Header("Move info")]
@@ -14,8 +14,6 @@ public class Player : Entity
     public float jumpForce = 12f;
 
     [Header("Dash info")]
-    [SerializeField] private float dashCooldown; //인스펙터 창에서 설정할 대시 쿨타임
-    private float dashUsageTimer; //Time.DeltaTime으로 초기화 시킬 대시 쿨타임
     public float dashSpeed;
     public float dashDuration;
     public float dashDir {  get; private set; }
@@ -34,16 +32,17 @@ public class Player : Entity
     public PlayerAirState airState { get; private set; }
     public PlayerDashState dashState { get; private set; }
     public PlayerWallSlideState wallSlide { get; private set; }
-
     public PlayerPrimaryAttackState primaryAttack { get; private set; }
+    public PlayerCounterAttackState counterAttack { get; private set; }
+    public SkillManager skill { get; private set; }
 
     #endregion
     protected override void Awake()
     {
         base.Awake();
 
-        //PlayerState에서 가져올 정보들 Player라는 오브젝트가 StateMachine에 있는 Idle 애니메이션을 가져온다.
         StateMachine = new PlayerStateMachine();
+        //PlayerState에서 가져올 정보들 Player라는 오브젝트가 StateMachine에 있는 Idle 애니메이션을 가져온다.
         //idleState는 bool값인 Idle에 해당한다.
         idleState = new PlayerIdleState(this, StateMachine, "Idle");
         //moveState는 bool값인 Move에 해당한다.
@@ -54,11 +53,15 @@ public class Player : Entity
         wallSlide = new PlayerWallSlideState(this, StateMachine, "WallSlide");
         wallJump = new PlayerWallJumpState(this, StateMachine, "Jump");
         primaryAttack = new PlayerPrimaryAttackState(this, StateMachine, "Attack");
+        counterAttack = new PlayerCounterAttackState(this, StateMachine, "CounterAttack");
     }
 
     protected override void Start()
     {
         base.Start();
+
+        //SkillManager.instance를 이제 앞으로 skill이라고 치면 된다 야호!
+        skill = SkillManager.instance;
 
         StateMachine.Initialize(idleState);
     }
@@ -92,11 +95,11 @@ public class Player : Entity
         if (IsWallDetected())
             return;
 
-        dashUsageTimer -= Time.deltaTime; //대시 쿨타임을 델타 타임만큼 뺀다.
+        //dashUsageTimer -= Time.deltaTime; 대시 쿨타임을 델타 타임만큼 뺀다.
+        //dashUsageTimer = dashCooldown; 다시 인스펙터창에서 정해둔 쿨타임으로 되돌리기
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dashUsageTimer < 0) //대시 쿨타임이 0미만이 되었을 때 대시를 누르면
+        if (Input.GetKeyDown(KeyCode.LeftShift) && SkillManager.instance.dash.CanUseSkill()) //스킬 쿨타임이 0미만이 되었을 때 대시를 누르면
         {
-            dashUsageTimer = dashCooldown; //다시 인스펙터창에서 정해둔 쿨타임으로 되돌리기
             dashDir = Input.GetAxisRaw("Horizontal");
 
             if (dashDir == 0)

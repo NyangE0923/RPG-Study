@@ -6,6 +6,12 @@ public class Enemy : Entity
 {
     [SerializeField] protected LayerMask whatIsPlayer;
 
+    [Header("Stunned info")]
+    public float stunDuration;
+    public Vector2 stunDirection;
+    protected bool canBeStunned;
+    [SerializeField] protected GameObject counterImage;
+
     [Header("Move info")]
     public float moveSpeed;
     public float idleTime;
@@ -30,6 +36,28 @@ public class Enemy : Entity
         base.Update();
         //EnemyState의 currentState(현재 상태)를 호출하여 상태를 업데이트한다.
         stateMachine.currentState.Update();
+    }
+
+    public virtual void OpenCounterAttackWindow()
+    {
+        canBeStunned = true;
+        counterImage.SetActive(true);
+    }
+
+    public virtual void CloseCounterAttackWindow()
+    {
+        canBeStunned = false;
+        counterImage.SetActive(false);
+    }
+
+    public virtual bool CanBeStunned()
+    {
+        if (canBeStunned)
+        {
+            CloseCounterAttackWindow();
+            return true;
+        }
+        return false;
     }
 
     // 현재 상태 머신의 currentState에서 AnimationFinishTrigger 메서드를 호출한다.

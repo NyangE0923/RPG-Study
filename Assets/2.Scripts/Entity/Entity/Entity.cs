@@ -9,9 +9,14 @@ public class Entity : MonoBehaviour
     public Animator anim { get; private set; }
     //Rigidbody2D 읽기 전용 속성정의
     public Rigidbody2D rb { get; private set; }
+    //EntityFX 클래스 읽기 전용 속성정의
+    public EntityFX fx { get; private set; }
 
     #endregion
-
+    [Header("Knockback info")]
+    [SerializeField] protected Vector2 knockbackDirection;
+    [SerializeField] protected float knockbackDuration;
+    protected bool isknocked;
 
     [Header("Collision info")]
     public Transform attackCheck;
@@ -35,6 +40,7 @@ public class Entity : MonoBehaviour
         //주의 위에서부터 시작되므로 구성요소부터 얻고 초기화 해야함!!
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        fx = GetComponentInChildren<EntityFX>();
     }
 
     protected virtual void Update()
@@ -44,7 +50,21 @@ public class Entity : MonoBehaviour
 
     public virtual void Damage()
     {
+        fx.StartCoroutine("FlashFX");
+        StartCoroutine("HitKnockback");
         Debug.Log(gameObject.name + " was damaged!");
+    }
+
+    protected virtual IEnumerator HitKnockback()
+    {
+        //넉백을 활성화 한다.
+        isknocked = true;
+        //rigidbody2D velocity의 값을 현재 방향의 반대 방향으로 밀려난다.
+        rb.velocity = new Vector2(knockbackDirection.x * -facingDir, knockbackDirection.y);
+        //knocbackDuration 변수 시간만큼 반환한다.
+        yield return new WaitForSeconds(knockbackDuration);
+        //넉백을 비활성화 한다.
+        isknocked = false;
     }
 
     #region Collision
@@ -73,12 +93,22 @@ public class Entity : MonoBehaviour
     }
     #region Velocity
     //이동속도를 0으로 만드는 함수
-    public void SetZeroVelocity() => rb.velocity = new Vector2(0, 0);
+    public void SetZeroVelocity()
+    {
+        if (isknocked)
+            return;
+
+        rb.velocity = new Vector2(0, 0);
+    }
 
     //SetVelocity 라는 메서드(float x, y를 가진)를 생성한다.
     //이때 rigidbody2D의 velocity는 새로운 velocity _xVelocity, _yVelocity로 선언한다.
     public void SetVelocity(float _xVelocity, float _yVelocity)
     {
+        //넉백이 활성화 되어있을 때는 이동하는 값을 반환한다.(이동 못한다는 뜻)
+        if(isknocked)
+            return;
+
         rb.velocity = new Vector2(_xVelocity, _yVelocity);
         FlipController(_xVelocity);
     }

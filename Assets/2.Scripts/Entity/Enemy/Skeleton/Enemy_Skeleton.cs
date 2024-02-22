@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Enemy_Skeleton : Enemy
@@ -7,10 +8,14 @@ public class Enemy_Skeleton : Enemy
 
     #region States
 
+    //각 클래스에 속하는 상태를 가져오거나 설정한다. 이 속성은 읽기 전용이므로 외부에서 값을 변경할 수 없다.
+    //private set이기 때문
     public SkeletonIdleState idleState { get; private set; }
     public SkeletonMoveState moveState { get; private set; }
     public SkeletonBattleState battleState { get; private set; }
     public SkeletonAttackState attackState { get; private set; }
+
+    public SkeletonStunnedState stunnedState { get; private set; }
 
     #endregion
     protected override void Awake()
@@ -20,6 +25,7 @@ public class Enemy_Skeleton : Enemy
         moveState = new SkeletonMoveState(this, stateMachine, "Move", this);
         battleState = new SkeletonBattleState(this, stateMachine, "Move", this);
         attackState = new SkeletonAttackState(this, stateMachine, "Attack", this);
+        stunnedState = new SkeletonStunnedState(this, stateMachine, "Stunned", this);
     }
 
     protected override void Start()
@@ -31,5 +37,15 @@ public class Enemy_Skeleton : Enemy
     protected override void Update()
     {
         base.Update();
+    }
+
+    public override bool CanBeStunned()
+    {
+        if(base.CanBeStunned())
+        {
+            stateMachine.ChangeState(stunnedState);
+            return true;
+        }
+        return false;
     }
 }
