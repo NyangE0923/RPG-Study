@@ -23,6 +23,9 @@ public class PlayerGroundedState : PlayerState
     {
         base.Update();
 
+        if (Input.GetKeyDown(KeyCode.Mouse1) && HasNoSword())
+            stateMachine.ChangeState(player.aimSword);
+
         if (Input.GetKeyDown(KeyCode.Mouse0))
             stateMachine.ChangeState(player.primaryAttack);
 
@@ -38,5 +41,20 @@ public class PlayerGroundedState : PlayerState
         {
             stateMachine.ChangeState(player.counterAttack);
         }
+    }
+
+    private bool HasNoSword()
+    {
+        //플레이어 객체에 sword가 없다면
+        if (!player.sword)
+        {
+            //true를 반환한다. (검을 가지고 있음을 의미)
+            return true;
+        }
+
+        //플레이어 객체에 sword컴포넌트에 있는 Sword_Skill_Controller에 있는 ReturnSword메서드를 호출한다.
+        player.sword.GetComponent<Sword_Skill_Controller>().ReturnSword();
+        //false를 반환한다. (검을 가지고 있지 않음을 의미한다.)
+        return false;
     }
 }

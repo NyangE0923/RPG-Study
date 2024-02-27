@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : Entity
 {
+
     [Header("Attack details")]
     public Vector2[] attackMovement;
     public float counterAttackDuration = 0.2f;
@@ -12,6 +13,7 @@ public class Player : Entity
     [Header("Move info")]
     public float moveSpeed = 12f;
     public float jumpForce = 12f;
+    public float swordReturnImpact;
 
     [Header("Dash info")]
     public float dashSpeed;
@@ -35,6 +37,10 @@ public class Player : Entity
     public PlayerPrimaryAttackState primaryAttack { get; private set; }
     public PlayerCounterAttackState counterAttack { get; private set; }
     public SkillManager skill { get; private set; }
+    public GameObject sword {  get; private set; }
+
+    public PlayerAimSwordState aimSword { get; private set; }
+    public PlayerCatchSwordState catchSword { get; private set; }
 
     #endregion
     protected override void Awake()
@@ -54,6 +60,9 @@ public class Player : Entity
         wallJump = new PlayerWallJumpState(this, StateMachine, "Jump");
         primaryAttack = new PlayerPrimaryAttackState(this, StateMachine, "Attack");
         counterAttack = new PlayerCounterAttackState(this, StateMachine, "CounterAttack");
+
+        aimSword = new PlayerAimSwordState(this, StateMachine, "AimSword");
+        catchSword = new PlayerCatchSwordState(this, StateMachine, "CatchSword");
     }
 
     protected override void Start()
@@ -72,6 +81,17 @@ public class Player : Entity
 
         StateMachine.currentState.Update();
         CheckForDashInput();
+    }
+
+    public void AssignNewSword(GameObject _newSword)
+    {
+        sword = _newSword;
+    }
+
+    public void CatchTheSword()
+    {
+        StateMachine.ChangeState(catchSword);
+        Destroy(sword);
     }
 
     //주어진 시간 동안 isBusy를 true로 설정한 후, 해당 시간이 경과하면 다시 false로 설정한다.
