@@ -12,7 +12,7 @@ public class Clone_Skill : Skill
     [SerializeField] private bool canAttack;
 
     //플레이어 현재 위치에 프리팹 객체를 만드는 메서드
-    public void CreateClone(Transform _clonePosition)
+    public void CreateClone(Transform _clonePosition, Vector3 _offset)
     {
         //새로운 오브젝트 프리팹 '클론'을 Instantiate메서드로 만든다.
         GameObject newClone = Instantiate(clonePrefab);
@@ -22,6 +22,6 @@ public class Clone_Skill : Skill
         //cloneDuration은 클론의 지속 시간 변수
         //정리 : 새로운 클론에 추가된 Clone_Skill_Controller 컴포넌트의 SetupClone 메소드를 호출하여
         //클론의 위치와 지속시간을 설정하는 메서드
-        newClone.GetComponent<Clone_Skill_Controller>().SetupClone(_clonePosition, cloneDuration, canAttack);
+        newClone.GetComponent<Clone_Skill_Controller>().SetupClone(_clonePosition, cloneDuration, canAttack, _offset);
     }
 }

@@ -11,6 +11,8 @@ public class Entity : MonoBehaviour
     public Rigidbody2D rb { get; private set; }
     //EntityFX 클래스 읽기 전용 속성정의
     public EntityFX fx { get; private set; }
+    
+    public SpriteRenderer sr { get; private set; }
 
     #endregion
     [Header("Knockback info")]
@@ -38,9 +40,10 @@ public class Entity : MonoBehaviour
     protected virtual void Start()
     {
         //주의 위에서부터 시작되므로 구성요소부터 얻고 초기화 해야함!!
+        sr = GetComponentInChildren<SpriteRenderer>();
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        fx = GetComponentInChildren<EntityFX>();
+        fx = GetComponent<EntityFX>();
     }
 
     protected virtual void Update()
@@ -52,7 +55,7 @@ public class Entity : MonoBehaviour
     {
         fx.StartCoroutine("FlashFX");
         StartCoroutine("HitKnockback");
-        Debug.Log(gameObject.name + " was damaged!");
+        //Debug.Log(gameObject.name + " was damaged!");
     }
 
     protected virtual IEnumerator HitKnockback()
@@ -136,4 +139,12 @@ public class Entity : MonoBehaviour
         }
     }
     #endregion
+
+    public void MakeTransprent(bool _transprent)
+    {
+        if (_transprent)
+            sr.color = Color.clear;
+        else
+            sr.color = Color.white;
+    }
 }

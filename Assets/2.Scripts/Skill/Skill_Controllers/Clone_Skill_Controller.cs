@@ -17,7 +17,7 @@ public class Clone_Skill_Controller : MonoBehaviour
     {
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
-        sr.color = Color.black;
+        sr.color = Color.yellow;
     }
 
     private void Update()
@@ -26,7 +26,7 @@ public class Clone_Skill_Controller : MonoBehaviour
 
         if (cloneTimer < 0)
         {
-            sr.color = new Color(0, 0, 0, sr.color.a - (Time.deltaTime * colorLoosingSpeed));
+            sr.color = new Color(1, 0.92f, 0.016f, sr.color.a - (Time.deltaTime * colorLoosingSpeed));
 
             if (sr.color.a <= 0)
             {
@@ -34,12 +34,12 @@ public class Clone_Skill_Controller : MonoBehaviour
             }
         }
     }
-    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack)
+    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset)
     {
         if (_canAttack)
             anim.SetInteger("AttackNumber", Random.Range(1, 3));
 
-        transform.position = _newTransform.position;
+        transform.position = _newTransform.position + _offset;
         cloneTimer = _cloneDuration;
 
         FaceClosestTarget();

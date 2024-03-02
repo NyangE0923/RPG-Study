@@ -16,6 +16,7 @@ public class Enemy : Entity
     public float moveSpeed;
     public float idleTime;
     public float battleTime;
+    private float defaultMoveSpeed;
 
     [Header("Attack info")]
     public float attackDistance;
@@ -29,6 +30,7 @@ public class Enemy : Entity
         base.Awake();
         //새로운 인스턴스 생성
         stateMachine = new EnemyStateMachine();
+        defaultMoveSpeed = moveSpeed;
     }
 
     protected override void Update()
@@ -36,6 +38,29 @@ public class Enemy : Entity
         base.Update();
         //EnemyState의 currentState(현재 상태)를 호출하여 상태를 업데이트한다.
         stateMachine.currentState.Update();
+    }
+
+    public virtual void FreezeTime(bool _timeFrozen) //bool 매개변수를 가지고 있는 공용 가상 메서드 FreezeTime 메서드
+    {
+        if (_timeFrozen) //_timeFrozen이 true라면
+        {
+            moveSpeed = 0; //moveSpeed를 0으로 만들고, 애니메이션을 중지한다.
+            anim.speed = 0;
+        }
+        else
+        {
+            moveSpeed = defaultMoveSpeed; //_timeFrozen이 false라면 moveSpeed를 defaultMoveSpeed로 변경하고 애니메이션을 재생한다.
+            anim.speed = 1;
+        }
+    }
+
+    protected virtual IEnumerator FreezeTimerFor(float _seconds) //보호받는 가상 코루틴 FreezeTimerFor(매개변수는 시간을 나타내는 float변수)
+    {
+        FreezeTime(true); //FreezeTime메서드의 매개변수를 True로 변경한다.
+
+        yield return new WaitForSeconds(_seconds); //yield return을 _seconds 이후에 반환한다.
+
+        FreezeTime(false); //FreezeTime메서드의 매개변수를 false로 변경한다.
     }
 
     public virtual void OpenCounterAttackWindow()

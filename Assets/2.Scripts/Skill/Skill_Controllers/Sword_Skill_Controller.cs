@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Sword_Skill_Controller : MonoBehaviour
 {
-    [SerializeField] private float returnSpeed = 12f;
     private Animator anim;
     private Rigidbody2D rb;
     private CircleCollider2D cd;
@@ -13,8 +12,11 @@ public class Sword_Skill_Controller : MonoBehaviour
     private bool canRotate = true;
     private bool isReturning;
 
+    private float freezeTimeDuration;
+    private float returnSpeed = 12f;
+
     [Header("Bounce info")]
-    [SerializeField] private float bounceSpeed;
+    private float bounceSpeed;
     private bool isBouncing; //튕기기를 할 것인지
     private int bounceAmount; //튕기는 횟수
     private List<Transform> enemyTarget; //타겟을 담을 리스트
@@ -42,27 +44,37 @@ public class Sword_Skill_Controller : MonoBehaviour
         cd = GetComponent<CircleCollider2D>();
     }
 
+    private void DestroyMe()
+    {
+        Destroy(gameObject);
+    }
+
     #region 다른 스크립트나 메서드에서 사용할 수 있도록 특정 동작을 설정하고 초기화 하는 데 사용하는 것.
-    public void SetupSword(Vector2 _dir, float _gravityScale, Player _player)
+    public void SetupSword(Vector2 _dir, float _gravityScale, Player _player, float _FreezeTimeDuration, float _returnSpeed)
     {
         player = _player;
+        freezeTimeDuration = _FreezeTimeDuration;
+        returnSpeed = _returnSpeed;
 
         rb.velocity = _dir;
         rb.gravityScale = _gravityScale;
 
-        if(pierceAmount <= 0)
+        if (pierceAmount <= 0)
             anim.SetBool("Rotation", true);
 
         //스핀 스킬의 정지후 이동 방향에 대한 코드
         //mathf.clamp(value, min, max) 주어진 값을 최소값과 최대값 사이의 값으로 제한한다.
         //만약 min보다 작으면 min값으로, max보다 크면 max 값으로 제한한다.
         spinDirection = Mathf.Clamp(rb.velocity.x, -1, 1);
+
+        Invoke("DestroyMe", 5);
     }
 
-    public void SetupBounce(bool _isBouncing, int _amountOfBounces)
+    public void SetupBounce(bool _isBouncing, int _amountOfBounces, float _bounceSpeed)
     {
         isBouncing = _isBouncing;
         bounceAmount = _amountOfBounces;
+        bounceSpeed = _bounceSpeed;
 
         enemyTarget = new List<Transform>(); //새로운 위치값을 담을 리스트를 초기화 한다.
     }
@@ -128,12 +140,12 @@ public class Sword_Skill_Controller : MonoBehaviour
                 spinTimer -= Time.deltaTime; //spinTimer에서 Time.deltaTime만큼 뺀다
 
 
+
                 //transform.position == 현재위치
                 //Vector2.MoveTowards == current(현재위치)에서 target(목표위치)까지 이동하는데 사용된다.
                 //정리 : 현재위치에서 spinDirection만큼 이동한 위치로 설정되며 y축은 현재 위치와 동일하다.
                 //이때 속도는 1.5f * Time.deltaTime으로 설정해서 일정한 속도(1.5f)로 이동하도록 보장한다.
-                transform.position = Vector2.MoveTowards(transform.position, 
-                    new Vector2(transform.position.x + spinDirection,transform.position.y), 1.5f * Time.deltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x + spinDirection,transform.position.y), 1.5f * Time.deltaTime);
 
                 if (spinTimer < 0) //spinTimer가 0보다 작아질 경우
                 {
@@ -153,7 +165,7 @@ public class Sword_Skill_Controller : MonoBehaviour
                     foreach (var hit in colliders) //colliders 배열에 있는 각 콜라이더에 대해 반복한다.
                     {
                         if (hit.GetComponent<Enemy>() != null) //해당 콜라이더가 Enemy 컴포넌트를 가지고 있다면
-                            hit.GetComponent<Enemy>().Damage();//해당 콜라이더의 Enemy 컴포넌트에 있는 Damage메서드를 출력한다.
+                            SwordSkillDamage(hit.GetComponent<Enemy>());
                     }
                 }
             }
@@ -181,8 +193,9 @@ public class Sword_Skill_Controller : MonoBehaviour
             //타겟 인덱스를 증가시켜 다음 적을 추적할 수 있도록 한다.
             if (Vector2.Distance(transform.position, enemyTarget[targetIndex].position) < 0.1f)
             {
-                //enemyTarget[targetIndex](리스트 인덱스)가 Enemy컴포넌트에 있는 Damage함수를 호출한다.
-                enemyTarget[targetIndex].GetComponent<Enemy>().Damage();
+                //enemyTarget 리스트에서 targetIndex로 지정된 인덱스에 해당하는 요소를 가져오고
+                //해당 요소가 Enemy컴포넌트를 가지고 있는지 확인한다.
+                SwordSkillDamage(enemyTarget[targetIndex].GetComponent<Enemy>());
 
                 targetIndex++;
                 bounceAmount--; //튕기는 횟수 차감
@@ -205,11 +218,22 @@ public class Sword_Skill_Controller : MonoBehaviour
         if (isReturning)
             return;
 
-        collision.GetComponent<Enemy>()?.Damage(); //collision이 null이 아니고, 해당 콜라이더2D가 Enemy컴포넌트를 가지고 있다면 Damage메서드를 호출한다.
+        if (collision.GetComponent<Enemy>() != null)
+        {
+            Enemy enemy = collision.GetComponent<Enemy>();
+
+            SwordSkillDamage(enemy);
+        }
 
         SetupTargetsForBounce(collision);
 
         StuckInfo(collision);
+    }
+
+    private void SwordSkillDamage(Enemy enemy) //Enemy 클래스를 매개변수로 가져온다.
+    {
+        enemy.Damage(); //enemy의 데미지 메서드
+        enemy.StartCoroutine("FreezeTimerFor", freezeTimeDuration); //enemy의 코루틴
     }
 
     private void SetupTargetsForBounce(Collider2D collision)

@@ -42,6 +42,8 @@ public class Player : Entity
     public PlayerAimSwordState aimSword { get; private set; }
     public PlayerCatchSwordState catchSword { get; private set; }
 
+    public PlayerBlackholeState blackHole { get; private set; }
+
     #endregion
     protected override void Awake()
     {
@@ -63,6 +65,7 @@ public class Player : Entity
 
         aimSword = new PlayerAimSwordState(this, StateMachine, "AimSword");
         catchSword = new PlayerCatchSwordState(this, StateMachine, "CatchSword");
+        blackHole = new PlayerBlackholeState(this, StateMachine, "Jump");
     }
 
     protected override void Start()
@@ -81,6 +84,9 @@ public class Player : Entity
 
         StateMachine.currentState.Update();
         CheckForDashInput();
+
+        if (Input.GetKeyDown(KeyCode.S))
+            skill.crystal.CanUseSkill();
     }
 
     public void AssignNewSword(GameObject _newSword)
@@ -93,6 +99,7 @@ public class Player : Entity
         StateMachine.ChangeState(catchSword);
         Destroy(sword);
     }
+
 
     //주어진 시간 동안 isBusy를 true로 설정한 후, 해당 시간이 경과하면 다시 false로 설정한다.
     public IEnumerator BusyFor(float _seconds)
