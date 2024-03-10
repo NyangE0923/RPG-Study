@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Clone_Skill_Controller : MonoBehaviour
@@ -7,10 +5,15 @@ public class Clone_Skill_Controller : MonoBehaviour
     private SpriteRenderer sr;
     private Animator anim;
     [SerializeField] private float colorLoosingSpeed;
+
     private float cloneTimer;
     [SerializeField] private Transform attackCheck;
     [SerializeField] private float attackCheckRadius = 0.8f;
     private Transform closestEnemy;
+    private int facingDir = 1;
+
+    private bool canDuplicateClone;
+    private float chanceToDuplicate;
 
 
     private void Awake()
@@ -34,7 +37,7 @@ public class Clone_Skill_Controller : MonoBehaviour
             }
         }
     }
-    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset)
+    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset, Transform _closestEnemy, bool _canDuplicate, float _chanceToDuplicate)
     {
         if (_canAttack)
             anim.SetInteger("AttackNumber", Random.Range(1, 3));
@@ -42,6 +45,9 @@ public class Clone_Skill_Controller : MonoBehaviour
         transform.position = _newTransform.position + _offset;
         cloneTimer = _cloneDuration;
 
+        closestEnemy = _closestEnemy;
+        canDuplicateClone = _canDuplicate;
+        chanceToDuplicate = _chanceToDuplicate;
         FaceClosestTarget();
     }
 
@@ -65,44 +71,38 @@ public class Clone_Skill_Controller : MonoBehaviour
         {
             // 해당 collider2D 객체에 Enemy 컴포넌트가 있는지 확인하고, Enemy 컴포넌트가 있다면 해당 객체의 Damage 메서드를 호출하여 데미지를 입힌다.
             if (hit.GetComponent<Enemy>() != null)
+            {
                 hit.GetComponent<Enemy>().Damage();
-        }
 
+                //canDuplicateClone이 true라면 Random.Range를 호출하여
+                //최소0부터 최대100까지 랜덤으로 수가 나오도록 하고
+                //이때 나오는 수가 99미만이라면(99%의 확률을 나타냄) 싱글톤 스킬매니저의
+                //클론 생성 함수를 이용하여 colliders배열에 저장된 collider2D객체의 위치에서 오른쪽(0.5)에서 클론을 생성한다.
+                //이때 FaceClosestTarget 메서드에서 객체의 위치가 적보다 오른쪽에 있다면 facingDir를 -1로 설정하기 때문에
+                //다시 한번 클론이 생성되게 될때는 0.5f * -1이 되므로 반대 방향에서 클론이 생성된다.
+                if (canDuplicateClone)
+                {
+                    if(Random.Range(0,100) < chanceToDuplicate)
+                    {
+                        SkillManager.instance.clone.CreateClone(hit.transform, new Vector3(0.5f * facingDir, 0));
+                    }
+                }
+            }
+        }
     }
 
     private void FaceClosestTarget()
     {
-        //현재 위치 주변(tranform.position) 범위25 안에 있는 Collider2D 객체들을 colliders 배열에 저장한다.
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 25);
-        //가장 가까운 적과의 거리를 저장하는 변수를 초기화 하고
-        float closestDistance = Mathf.Infinity;
-        //현재 위치 주변의 모든 Collider2D 객체에 대해 반복하는 foreach문
-        foreach (var hit in colliders)
-        {
-            //현재 Collider2D 객체가 Enemy 컴포넌트를 포함하고 있는지 확인 (적인지 확인)
-            //만약 Boss라는 컴포넌트를 따로 만들게 된다면 이 스킬을 무효화 시킬 수 있을 것으로 보임
-            if(hit.GetComponent<Enemy>() != null)
-            {
-                //float distanceToEnemy 지역변수를 만들어서 현재 위치와
-                //colliders 배열에 담긴 Enemy스크립트 컴포넌트를 가지고 있는 Collider2D 객체와의 거리를 계산한다.
-                float distanceToEnemy = Vector2.Distance(transform.position, hit.transform.position);
-
-                //계산한 적의 거리가 closestDistance(이전에 저장된 가장 가까운 적과의 거리)변수보다 짧으면
-                if(distanceToEnemy < closestDistance)
-                {
-                    //현재 적을 가장 가까운 적으로 설정하고,
-                    //closestDistance값에 distanceToEnemy를 갱신한다.
-                    closestDistance = distanceToEnemy;
-                    closestEnemy = hit.transform;
-                }
-            }
-        }
         //가장 가까운 적이 존재하는 경우에는
-        if(closestEnemy != null)
+        if (closestEnemy != null)
         {
-            //현재위치가 적의 위치보다 오른쪽(+일수록 오른쪽)에 있으면 Rotate메서드를 이용해 180도 회전시킨다.
+            //적의 오른쪽(+일수록 오른쪽)에 있으면 Rotate메서드를 이용해 180도 회전시킨다.
+            //facingDir를 -1로 설정한다.
             if (transform.position.x > closestEnemy.position.x)
+            {
+                facingDir = -1;
                 transform.Rotate(0, 180, 0);
+            }
         }
     }
 }
