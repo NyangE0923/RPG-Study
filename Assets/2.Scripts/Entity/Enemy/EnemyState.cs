@@ -38,6 +38,8 @@ public class EnemyState
     {
         //enemy클래스의 애니메이션(이름, 비활성화)
         enemyBase.anim.SetBool(animBoolName, false);
+        //enemy클래스의 AssignLastAnimName메소드의 매개변수에 해당 애니메이션 Bool 변수 이름을 할당한다.
+        enemyBase.AssignLastAnimName(animBoolName);
     }
 
     public virtual void AnimationFinishTrigger()

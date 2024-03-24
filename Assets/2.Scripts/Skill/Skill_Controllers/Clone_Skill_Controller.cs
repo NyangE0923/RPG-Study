@@ -72,7 +72,7 @@ public class Clone_Skill_Controller : MonoBehaviour
             // 해당 collider2D 객체에 Enemy 컴포넌트가 있는지 확인하고, Enemy 컴포넌트가 있다면 해당 객체의 Damage 메서드를 호출하여 데미지를 입힌다.
             if (hit.GetComponent<Enemy>() != null)
             {
-                hit.GetComponent<Enemy>().Damage();
+                hit.GetComponent<Enemy>().DamageEffect();
 
                 //canDuplicateClone이 true라면 Random.Range를 호출하여
                 //최소0부터 최대100까지 랜덤으로 수가 나오도록 하고

@@ -19,9 +19,12 @@ public class Enemy_SkeletonAnimationTriggers : MonoBehaviour
         // colliders 배열에 저장된 각 collider2D 객체에 대해 반복한다.
         foreach (var hit in colliders)
         {
-            // 해당 collider2D 객체에 Player 컴포넌트가 있는지 확인하고, Player 컴포넌트가 있다면 해당 객체의 Damage 메서드를 호출하여 데미지를 입힌다.
-            if (hit.GetComponent<Player>() != null) //null이 아니라면
-                hit.GetComponent<Player>().Damage(); //player 객체의 Damage메서드 호출
+            // 해당 collider2D 객체가 Player 컴포넌트를 가지고 있는지 확인하고, Player 컴포넌트가 있다면
+            if (hit.GetComponent<Player>() != null)
+            {
+                PlayerStats target = hit.GetComponent<PlayerStats>();
+                enemy.stats.DoDamage(target);
+            }
         }
     }
 

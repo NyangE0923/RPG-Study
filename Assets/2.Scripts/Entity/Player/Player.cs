@@ -38,11 +38,10 @@ public class Player : Entity
     public PlayerCounterAttackState counterAttack { get; private set; }
     public SkillManager skill { get; private set; }
     public GameObject sword {  get; private set; }
-
     public PlayerAimSwordState aimSword { get; private set; }
     public PlayerCatchSwordState catchSword { get; private set; }
-
     public PlayerBlackholeState blackHole { get; private set; }
+    public PlayerDeadState deadState { get; private set; }
 
     #endregion
     protected override void Awake()
@@ -62,10 +61,10 @@ public class Player : Entity
         wallJump = new PlayerWallJumpState(this, StateMachine, "Jump");
         primaryAttack = new PlayerPrimaryAttackState(this, StateMachine, "Attack");
         counterAttack = new PlayerCounterAttackState(this, StateMachine, "CounterAttack");
-
         aimSword = new PlayerAimSwordState(this, StateMachine, "AimSword");
         catchSword = new PlayerCatchSwordState(this, StateMachine, "CatchSword");
         blackHole = new PlayerBlackholeState(this, StateMachine, "Jump");
+        deadState = new PlayerDeadState(this, StateMachine, "Die");
     }
 
     protected override void Start()
@@ -134,5 +133,14 @@ public class Player : Entity
 
             StateMachine.ChangeState(dashState); //dashState로 이동
         }
+    }
+
+    //Entity클래스의 Die 메소드를 재정의 한다.
+    public override void Die()
+    {
+        //기본 Die 메소드
+        base.Die();
+        //상태머신의 상태변경 메소드를 통해 DeadState 상태로 변경한다.
+        StateMachine.ChangeState(deadState);
     }
 }

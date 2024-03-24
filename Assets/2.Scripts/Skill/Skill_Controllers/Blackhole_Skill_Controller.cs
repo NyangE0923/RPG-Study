@@ -34,6 +34,9 @@ public class Blackhole_Skill_Controller : MonoBehaviour
         amountOfAttacks = _amountOfAttacks;
         cloneAttackCooldown = _cloneAttackCooldown;
         blackholeTimer = _blackholeDuratin;
+
+        if (SkillManager.instance.clone.crystalInseadOfClone)
+            playerCanDisapear = false;
     }
 
     private void Update()
@@ -113,6 +116,24 @@ public class Blackhole_Skill_Controller : MonoBehaviour
                 xOffset = 2;
             else
                 xOffset = -2;
+
+            //만약 싱글톤 스킬 매니저에 선언된 Clone_Skill 컴포넌트의 crystalInseadOfClone이 true라면
+            //Crystal_SKill 컴포넌트의 CreateCrystal 메소드를 호출한다.
+            //Crystal_SKill 컴포넌트의 CurrentCrystalChooseRandomTarget 메소드를 호출한다.
+            //crystalInseadOfClone이 true가 아니라면 (else라면)
+            //Clone_Skill 컴포넌트의 CreateClone 메소드를 호출한다.
+            //이때 Transform, Vector3 매개변수를 가져온다.
+            //targets는 적을 담을 리스트, 랜덤하게 50%의 확률로 2와 -2만큼 x위치가 이동한 상태에서 클론을 생성한다.
+
+            if (SkillManager.instance.clone.crystalInseadOfClone)
+            {
+                SkillManager.instance.crystal.CreateCrystal();
+                SkillManager.instance.crystal.CurrentCrystalChooseRandomTarget();
+            }
+            else
+            {
+                SkillManager.instance.clone.CreateClone(targets[randomIndex], new Vector3(xOffset, 0));
+            }
 
             SkillManager.instance.clone.CreateClone(targets[randomIndex], new Vector3(xOffset, 0));
             amountOfAttacks--;

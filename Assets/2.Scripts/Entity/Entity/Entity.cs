@@ -11,8 +11,11 @@ public class Entity : MonoBehaviour
     public Rigidbody2D rb { get; private set; }
     //EntityFX 클래스 읽기 전용 속성정의
     public EntityFX fx { get; private set; }
-    
+    //SpriteRenderer 읽기 전용 속성정의
     public SpriteRenderer sr { get; private set; }
+    //CharacterStats 클래스 읽기 전용 속성정의
+    public CharacterStats stats { get; private set; }
+    public CapsuleCollider2D cd { get; private set; }
 
     #endregion
     [Header("Knockback info")]
@@ -44,6 +47,8 @@ public class Entity : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
         fx = GetComponent<EntityFX>();
+        stats = GetComponent<CharacterStats>();
+        cd = GetComponent<CapsuleCollider2D>();
     }
 
     protected virtual void Update()
@@ -51,7 +56,7 @@ public class Entity : MonoBehaviour
 
     }
 
-    public virtual void Damage()
+    public virtual void DamageEffect()
     {
         fx.StartCoroutine("FlashFX");
         StartCoroutine("HitKnockback");
@@ -146,5 +151,10 @@ public class Entity : MonoBehaviour
             sr.color = Color.clear;
         else
             sr.color = Color.white;
+    }
+
+    public virtual void Die()
+    {
+
     }
 }

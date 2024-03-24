@@ -17,5 +17,8 @@ MonoBehaviour:
     - 2cda990e2423bbf4892e6590ba056729
     values:
     - goDatas_byGlobalId:
-        keys: []
-        values: []
+        keys:
+        - globalObjectIdString: GlobalObjectId_V1-2-2cda990e2423bbf4892e6590ba056729-201066596-0
+        values:
+        - colorIndex: 0
+          iconNameOrGuid: AvatarMask On Icon

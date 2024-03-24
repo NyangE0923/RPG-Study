@@ -18,7 +18,7 @@ public class Clone_Skill : Skill
     [SerializeField] private bool canDuplicateClone;
     [SerializeField] private float chanceDuplicate;
     [Header("Crystal instead of clone")]
-    [SerializeField] private bool crystalInseadOfClone;
+    public bool crystalInseadOfClone;
 
     //플레이어 현재 위치에 프리팹 객체를 만드는 메서드
     public void CreateClone(Transform _clonePosition, Vector3 _offset)

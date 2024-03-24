@@ -232,7 +232,7 @@ public class Sword_Skill_Controller : MonoBehaviour
 
     private void SwordSkillDamage(Enemy enemy) //Enemy 클래스를 매개변수로 가져온다.
     {
-        enemy.Damage(); //enemy의 데미지 메서드
+        enemy.DamageEffect(); //enemy의 데미지 메서드
         enemy.StartCoroutine("FreezeTimerFor", freezeTimeDuration); //enemy의 코루틴
     }
 

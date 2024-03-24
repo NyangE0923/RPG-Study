@@ -25,9 +25,16 @@ public class PlayerAnimationTriggers : MonoBehaviour
         // colliders 배열에 저장된 각 collider2D 객체에 대해 반복한다.
         foreach (var hit in colliders)
         {
-            // 해당 collider2D 객체에 Enemy 컴포넌트가 있는지 확인하고, Enemy 컴포넌트가 있다면 해당 객체의 Damage 메서드를 호출하여 데미지를 입힌다.
+            // 해당 collider2D 객체에 Enemy 컴포넌트가 있는지 확인한다.
             if (hit.GetComponent<Enemy>() != null)
-                hit.GetComponent<Enemy>().Damage();
+            {
+                //그리고 해당 Enemy객체의 EnemyStats 컴포넌트를 가져와서
+                //EnemyStats 지역변수 target의 값에 넘겨준다.
+                //이렇게 하는 것으로 _target이 누구인지 알 수 있게 된다.
+                EnemyStats _target = hit.GetComponent<EnemyStats>();
+
+                player.stats.DoDamage(_target);
+            }
         }
 
     }

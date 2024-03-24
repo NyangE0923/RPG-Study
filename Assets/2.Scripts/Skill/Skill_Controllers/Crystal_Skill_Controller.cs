@@ -28,8 +28,12 @@ public class Crystal_Skill_Controller : MonoBehaviour
 
     public void ChooseRandomEnemy()
     {
-        //객체의 위치에서 25 크기의 반지름을 생성해 그 안에 들어오는 모든 whatIsEnemy에 해당하는 Collider 객체를 colliders배열에 담는다.
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 25, whatIsEnemy);
+        //싱글톤 스킬매니저가 가지고 있는 BlackHole_Skill 컴포넌트의 GetBlackholeRadius메소드 값을 선언한다.
+        //GetBlackholeRadius : maxSize / 2 (최대크기의 반으로 줄인다.)
+        float radius = SkillManager.instance.blackhole.GetBlackholeRadius();
+
+        //객체의 위치에서 지역변수 radius 크기의 반지름을 생성해 그 안에 들어오는 모든 whatIsEnemy에 해당하는 Collider 객체를 colliders배열에 담는다.
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, radius, whatIsEnemy);
         //closestTarget은 Transform변수이므로 colliders배열에 담긴 객체들의 transform값을 랜덤으로 가져온다.
         if(colliders.Length > 0)
             closestTarget = colliders[Random.Range(0, colliders.Length)].transform;
@@ -78,7 +82,7 @@ public class Crystal_Skill_Controller : MonoBehaviour
             //만약 해당 객체가 Enemy컴포넌트를 가지고 있다면
             //Enemy컴포넌트의 Damage메서드를 호출한다.
             if (hit.GetComponent<Enemy>() != null)
-                hit.GetComponent<Enemy>().Damage();
+                hit.GetComponent<Enemy>().DamageEffect();
         }
     }
 

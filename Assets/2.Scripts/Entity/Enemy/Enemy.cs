@@ -24,6 +24,8 @@ public class Enemy : Entity
     [HideInInspector] public float lastTimeAttacked;
     //EnemyStateMachine 읽기 전용 속성정의
     public EnemyStateMachine stateMachine { get; private set; }
+    //마지막 애니메이션 Bool값의 이름을 가져오는 프로퍼티
+    public string lastAnimBoolName { get; private set; }
 
     protected override void Awake()
     {
@@ -38,6 +40,14 @@ public class Enemy : Entity
         base.Update();
         //EnemyState의 currentState(현재 상태)를 호출하여 상태를 업데이트한다.
         stateMachine.currentState.Update();
+    }
+
+    //가상 메소드 AssignLastAnimName를 생성한다. 이때 매개변수 string _animBoolName값을 주고
+    //애니메이션이 재생되고 Exit를 통해 빠져나올때 해당 매개변수가 할당되도록 한다.
+    //이후 lastAnimBoolName변수에 해당 매개변수의 값을 주도록 한다.
+    public virtual void AssignLastAnimName(string _animBoolName)
+    {
+        lastAnimBoolName = _animBoolName;
     }
 
     public virtual void FreezeTime(bool _timeFrozen) //bool 매개변수를 가지고 있는 공용 가상 메서드 FreezeTime 메서드
