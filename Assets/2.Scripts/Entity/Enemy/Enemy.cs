@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : Entity
@@ -45,9 +46,23 @@ public class Enemy : Entity
     //가상 메소드 AssignLastAnimName를 생성한다. 이때 매개변수 string _animBoolName값을 주고
     //애니메이션이 재생되고 Exit를 통해 빠져나올때 해당 매개변수가 할당되도록 한다.
     //이후 lastAnimBoolName변수에 해당 매개변수의 값을 주도록 한다.
-    public virtual void AssignLastAnimName(string _animBoolName)
+    public virtual void AssignLastAnimName(string _animBoolName) => lastAnimBoolName = _animBoolName;
+
+    //Enemy스크립트도 Entity를 상속받고 있기 때문에 Slow, RetrunDefault 메소드를 오버라이드 할 수 있다.
+    public override void SlowEntityBy(float _slowPercentage, float _slowDuration)
     {
-        lastAnimBoolName = _animBoolName;
+        base.SlowEntityBy(_slowPercentage, _slowDuration);
+
+        moveSpeed = moveSpeed * (1 - _slowPercentage);
+        anim.speed = anim.speed * (1 - _slowPercentage);
+
+        Invoke("ReturnDefaultSpeed", _slowDuration);
+    }
+    protected override void ReturnDefaultSpeed()
+    {
+        base.ReturnDefaultSpeed();
+
+        moveSpeed = defaultMoveSpeed;
     }
 
     public virtual void FreezeTime(bool _timeFrozen) //bool 매개변수를 가지고 있는 공용 가상 메서드 FreezeTime 메서드

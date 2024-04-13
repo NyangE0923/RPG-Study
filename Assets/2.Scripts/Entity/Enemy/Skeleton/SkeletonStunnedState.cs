@@ -15,7 +15,7 @@ public class SkeletonStunnedState : EnemyState
         base.Enter();
 
         //enemy객체에서 0초 후에 시작하며, 0.1초 간격으로 "RedColorBlink" 함수를 호출한다.
-        enemy.fx.InvokeRepeating("RedColorBlink", 0, .2f);
+        enemy.fx.InvokeRepeating("CancelColorChange", 0, .2f);
 
         stateTimer = enemy.stunDuration;
 

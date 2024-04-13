@@ -35,6 +35,9 @@ public class Entity : MonoBehaviour
     public int facingDir { get; private set; } = 1;
     protected bool facingRight = true;
 
+    //델리게이트 System.Action onFlipped을 선언한다.
+    //호출되도록 설정하는 것으로 대리자의 역할을 맡길 수 있음.
+    public System.Action onFlipped;
     protected virtual void Awake()
     {
 
@@ -56,12 +59,18 @@ public class Entity : MonoBehaviour
 
     }
 
-    public virtual void DamageEffect()
+    //매개변수 float값을 가지고 있는 Slow적용을 위한 메소드 (느려짐 %, 느려짐 지속시간)
+    public virtual void SlowEntityBy(float _slowPercentage, float _slowDuration)
     {
-        fx.StartCoroutine("FlashFX");
-        StartCoroutine("HitKnockback");
-        //Debug.Log(gameObject.name + " was damaged!");
+
     }
+
+    protected virtual void ReturnDefaultSpeed()
+    {
+        anim.speed = 1;
+    }
+
+    public virtual void DamageImpact() => StartCoroutine("HitKnockback");
 
     protected virtual IEnumerator HitKnockback()
     {
@@ -128,6 +137,11 @@ public class Entity : MonoBehaviour
         facingDir = facingDir * -1;
         facingRight = !facingRight;
         transform.Rotate(0, 180, 0);
+
+        //onFlipped가 null이 아니라면
+        //객체의 방향이 바뀔때마다 onFlipped를 트리거 한다.
+        if(onFlipped != null)
+            onFlipped();
     }
 
     public virtual void FlipController(float _x)
@@ -144,14 +158,6 @@ public class Entity : MonoBehaviour
         }
     }
     #endregion
-
-    public void MakeTransprent(bool _transprent)
-    {
-        if (_transprent)
-            sr.color = Color.clear;
-        else
-            sr.color = Color.white;
-    }
 
     public virtual void Die()
     {

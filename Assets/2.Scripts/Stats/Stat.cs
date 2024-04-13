@@ -17,7 +17,25 @@ public class Stat
 
     public int GetValue()
     {
-        return baseValue;
+        //int형 변수 finalValue에 baseValue값을 초기화한다.
+        int finalValue = baseValue;
+
+        //modifiers리스트에 있는 각 요소에 대해 반복문을 실행한다.
+        //finalValue의 값에 modifier값을 더한다.
+        foreach (int modifier in modifiers)
+        {
+            finalValue += modifier;
+        }
+        //최종적으로 finalValue값을 반환하는 것으로
+        //GetValue()메소드를 호출하면 baseValue와 modifiers리스트의 값들이 합산된 결과를 얻을 수 있다.
+        return finalValue;
+    }
+
+    public void SetDefaultValue(int _value)
+    {
+        //Value의 기본값을 설정하는 메소드
+        //baseValue는 매개변수 _value의 값으로 초기화한다.
+        baseValue = _value;
     }
 
     public void AddModifier(int _modifier)

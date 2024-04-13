@@ -57,7 +57,6 @@ public class PlayerPrimaryAttackState : PlayerState
         comboCounter++;
         //마지막 공격한 시간을 기록한다.
         lastTimeAttacked = Time.time;
-        Debug.Log(lastTimeAttacked);
     }
 
     public override void Update()

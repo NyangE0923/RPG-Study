@@ -7,6 +7,7 @@ public class Crystal_Skill_Controller : MonoBehaviour
 {
     private Animator anim => GetComponent<Animator>();
     private CircleCollider2D cd => GetComponent<CircleCollider2D>();
+    private Player player;
 
     private float crystalExistTimer;
     private bool canExplode;
@@ -17,13 +18,14 @@ public class Crystal_Skill_Controller : MonoBehaviour
     private float growSpeed = 5;
     private Transform closestTarget;
     [SerializeField] private LayerMask whatIsEnemy;
-    public void SetupCrystal(float _crystalDuration, bool _canExplode, bool _canMove, float _moveSpeed, Transform _closestTarget)
+    public void SetupCrystal(float _crystalDuration, bool _canExplode, bool _canMove, float _moveSpeed, Transform _closestTarget, Player _player)
     {
         crystalExistTimer = _crystalDuration;
         canExplode = _canExplode;
         canMove = _canMove;
         moveSpeed = _moveSpeed;
         closestTarget = _closestTarget;
+        player = _player;
     }
 
     public void ChooseRandomEnemy()
@@ -54,7 +56,15 @@ public class Crystal_Skill_Controller : MonoBehaviour
         //객체의 위치에서 closestTarget위치로 moveSpeed에 Time.deltaTime을 곱한 속도로 이동한다.
         if (canMove)
         {
-            transform.position = Vector2.MoveTowards(transform.position, closestTarget.position, moveSpeed * Time.deltaTime);
+            if(closestTarget != null)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, closestTarget.position, moveSpeed * Time.deltaTime);
+            }
+            else
+            {
+                return;
+            }
+
             //만약 객체의 위치와 closestTarget의 위치가 1미만이라면 FinishCrystal메서드의 SelfDestroy를 이용해 객체를 파괴한다.
             //이후 객체의 canMove(이동)를 false로 설정한다.
             if (Vector2.Distance(transform.position, closestTarget.position) < 1)
@@ -82,7 +92,7 @@ public class Crystal_Skill_Controller : MonoBehaviour
             //만약 해당 객체가 Enemy컴포넌트를 가지고 있다면
             //Enemy컴포넌트의 Damage메서드를 호출한다.
             if (hit.GetComponent<Enemy>() != null)
-                hit.GetComponent<Enemy>().DamageEffect();
+                player.stats.DoMagicalDamage(hit.GetComponent<CharacterStats>());
         }
     }
 

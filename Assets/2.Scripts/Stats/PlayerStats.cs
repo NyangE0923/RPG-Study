@@ -15,7 +15,6 @@ public class PlayerStats : CharacterStats
     public override void TakeDamage(int _damage)
     {
         base.TakeDamage(_damage);
-        player.DamageEffect();
     }
     
     //CharacterStats 클래스의 Die메소드를 재정의 하고, Player 클래스의 Die 메소드를 호출한다.

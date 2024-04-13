@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Clone_Skill_Controller : MonoBehaviour
 {
+    private Player player;
     private SpriteRenderer sr;
     private Animator anim;
     [SerializeField] private float colorLoosingSpeed;
@@ -37,11 +38,12 @@ public class Clone_Skill_Controller : MonoBehaviour
             }
         }
     }
-    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset, Transform _closestEnemy, bool _canDuplicate, float _chanceToDuplicate)
+    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset, Transform _closestEnemy, bool _canDuplicate, float _chanceToDuplicate, Player _player)
     {
         if (_canAttack)
             anim.SetInteger("AttackNumber", Random.Range(1, 3));
 
+        player = _player;
         transform.position = _newTransform.position + _offset;
         cloneTimer = _cloneDuration;
 
@@ -72,7 +74,7 @@ public class Clone_Skill_Controller : MonoBehaviour
             // 해당 collider2D 객체에 Enemy 컴포넌트가 있는지 확인하고, Enemy 컴포넌트가 있다면 해당 객체의 Damage 메서드를 호출하여 데미지를 입힌다.
             if (hit.GetComponent<Enemy>() != null)
             {
-                hit.GetComponent<Enemy>().DamageEffect();
+                player.stats.DoDamage(hit.GetComponent<CharacterStats>());
 
                 //canDuplicateClone이 true라면 Random.Range를 호출하여
                 //최소0부터 최대100까지 랜덤으로 수가 나오도록 하고

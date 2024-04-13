@@ -37,7 +37,7 @@ public class Clone_Skill : Skill
         //정리 : 새로운 클론에 추가된 Clone_Skill_Controller 컴포넌트의 SetupClone 메소드를 호출하여
         //클론의 위치와 지속시간을 설정하는 메서드
         //FindClosestEnemy는 매개변수로 Transform을 가지기 때문에 newClone이 아닌 newClone의 Transform값을 입력한다.
-        newClone.GetComponent<Clone_Skill_Controller>().SetupClone(_clonePosition, cloneDuration, canAttack, _offset, FindClosestEnemy(newClone.transform), canDuplicateClone, chanceDuplicate);
+        newClone.GetComponent<Clone_Skill_Controller>().SetupClone(_clonePosition, cloneDuration, canAttack, _offset, FindClosestEnemy(newClone.transform), canDuplicateClone, chanceDuplicate, player);
     }
 
     public void CreateCloneOnDashStart()

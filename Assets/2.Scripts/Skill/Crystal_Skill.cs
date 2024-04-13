@@ -78,7 +78,7 @@ public class Crystal_Skill : Skill
 
         //SetupCrystal메서드를 매개변수 지속시간과 함께 호출한다.
         //이때 해당 float매개변수는 새로 선언한 전역변수 crystalDuration, canExplode, canMoveToEnemy, moveSpeed, FindClosestEnemy로 한다.
-        currentCrystalScript.SetupCrystal(crystalDuration, canExplode, canMoveToEnemy, moveSpeed, FindClosestEnemy(currentCrystal.transform));
+        currentCrystalScript.SetupCrystal(crystalDuration, canExplode, canMoveToEnemy, moveSpeed, FindClosestEnemy(currentCrystal.transform), player);
     }
 
     //CurrentCrystalChooseRandomTarget메서드는 '람다 표현식'을 사용하여
@@ -109,7 +109,7 @@ public class Crystal_Skill : Skill
                 //이때 생성된 newCrystal은 Crystal_Skill_Controller 컴포넌트를 받고
                 //SetupCrystal메서드를 매개변수(크리스탈 지속시간, 폭발 여부, 적들에게 이동, 이동속도, 근처의 적을 찾는 메서드)들과 함께 호출한다.
                 newCrystal.GetComponent<Crystal_Skill_Controller>().
-                    SetupCrystal(crystalDuration, canExplode, canMoveToEnemy, moveSpeed, FindClosestEnemy(newCrystal.transform));
+                    SetupCrystal(crystalDuration, canExplode, canMoveToEnemy, moveSpeed, FindClosestEnemy(newCrystal.transform), player);
 
                 if (crystalLeft.Count <= 0)
                 {
